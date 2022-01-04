@@ -10,7 +10,7 @@ from typing import Any, Dict, Union
 import sounddevice
 import vosk
 
-from . import log, misc
+from . import cli, misc
 
 DEFAULT_AUDIO_BLOCK_SIZE = 8000  # bytes
 
@@ -56,9 +56,9 @@ class MalinkaActivator:
 
     @staticmethod
     def launch(**kwargs: Dict[str, Any]) -> None:
-        log.setup_logging(kwargs['logfile'])
+        cli.setup_logging(kwargs['logfile'])
         recognizer_instance = Recognizer(kwargs['model'], MalinkaActivator._SpeechProcessor(
-            name='малинка', goodbye=kwargs['goodbye'], greeting=kwargs['greeting']
+            name=kwargs['name'], goodbye=kwargs['goodbye'], greeting=kwargs['greeting']
         ))
         recognizer_instance.start_recognition()
 
@@ -69,6 +69,7 @@ class MalinkaActivator:
                 '/usr/bin/env', 'python3', '-c',
                 'from malinka import malinka\n'
                 'malinka.MalinkaActivator.launch(\n'
+                f'''    name="{kwargs['name']}",\n'''
                 f'''    greeting="{kwargs['greeting']}",\n'''
                 f'''    goodbye="{kwargs['goodbye']}",\n'''
                 f'''    logfile="{kwargs['logfile']}",\n'''

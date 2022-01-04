@@ -18,8 +18,11 @@ def save_pid_to_file(path: Union[str, pathlib.Path], pid: int) -> None:
 
 
 def kill_by_pid_file(path: Union[str, pathlib.Path]) -> None:
-    with open(path, 'r') as file:
-        pid = int(file.read())
+    try:
+        with open(path, 'r') as file:
+            pid = int(file.read())
+    except (PermissionError, FileNotFoundError):
+        return
 
     logger.debug(f'Killing process with pid: {pid}')
     try:
